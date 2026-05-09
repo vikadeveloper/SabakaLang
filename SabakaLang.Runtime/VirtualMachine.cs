@@ -1,5 +1,4 @@
 using System.Text;
-using SabakaLang.Compiler;
 using SabakaLang.Compiler.Compiling;
 using SabakaLang.Compiler.Runtime;
 
@@ -29,6 +28,7 @@ public sealed class VirtualMachine
     private readonly GarbageCollector _gc;
  
     private static readonly HttpClient Http = new();
+    private static readonly Random Rnd = new();
     
     public VirtualMachine(
         TextReader?  input     = null,
@@ -662,7 +662,97 @@ public sealed class VirtualMachine
                         Push(fn(args));
                         break;
                     }
+                    
+                    
  
+                    case OpCode.MathSin:
+                    {
+                        RequireStack(1, "sin");
+                        Push(Value.FromFloat(Math.Sin(Pop().ToDouble())));
+                        break;
+                    }
+
+                    case OpCode.MathCos:
+                    {
+                        RequireStack(1, "cos");
+                        Push(Value.FromFloat(Math.Cos(Pop().ToDouble())));
+                        break;
+                    }
+
+                    case OpCode.MathTan:
+                    {
+                        RequireStack(1, "tan");
+                        Push(Value.FromFloat(Math.Tan(Pop().ToDouble())));
+                        break;
+                    }
+
+                    case OpCode.MathLog:
+                    {
+                        RequireStack(2, "log");
+                        var @base = Pop().ToDouble();
+                        var val = Pop().ToDouble();
+                        Push(Value.FromFloat(Math.Log(val, @base)));
+                        break;
+                    }
+
+                    case OpCode.MathSqrt:
+                    {
+                        RequireStack(1, "sqrt");
+                        Push(Value.FromFloat(Math.Sqrt(Pop().ToDouble())));
+                        break;
+                    }
+
+                    case OpCode.MathAbs:
+                    {
+                        RequireStack(1, "abs");
+                        var v = Pop();
+                        if (v.Type == SabakaType.Int) Push(Value.FromInt(Math.Abs(v.Int)));
+                        else Push(Value.FromFloat(Math.Abs(v.ToDouble())));
+                        break;
+                    }
+
+                    case OpCode.MathFloor:
+                    {
+                        RequireStack(1, "floor");
+                        Push(Value.FromInt((int)Math.Floor(Pop().ToDouble())));
+                        break;
+                    }
+
+                    case OpCode.MathCeil:
+                    {
+                        RequireStack(1, "ceil");
+                        Push(Value.FromInt((int)Math.Ceiling(Pop().ToDouble())));
+                        break;
+                    }
+
+                    case OpCode.MathRound:
+                    {
+                        RequireStack(1, "round");
+                        Push(Value.FromInt((int)Math.Round(Pop().ToDouble())));
+                        break;
+                    }
+
+                    case OpCode.MathMax:
+                        BinaryNumeric(Math.Max, "max");
+                        break;
+
+                    case OpCode.MathMin:
+                        BinaryNumeric(Math.Min, "min");
+                        break;
+
+                    case OpCode.MathPow:
+                        BinaryNumeric(Math.Pow, "pow");
+                        break;
+
+                    case OpCode.MathRand:
+                    {
+                        RequireStack(2, "rand");
+                        var max = Pop().Int;
+                        var min = Pop().Int;
+                        Push(Value.FromInt(Rnd.Next(min, max)));
+                        break;
+                    }
+
                     default:
                         throw new RuntimeException($"Unknown opcode: {instr.OpCode}");
                 }
