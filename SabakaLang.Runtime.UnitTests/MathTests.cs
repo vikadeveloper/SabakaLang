@@ -18,6 +18,19 @@ public class MathTests : Utilities
     [InlineData("min(10, 20)", "10")]
     [InlineData("pow(2, 3)", "8")]
     [InlineData("log(100, 10)", "2")]
+    [InlineData("log(8, 2)", "3")]
+    [InlineData("sqrt(25)", "5")]
+    [InlineData("sin(0)", "0")]
+    [InlineData("cos(0)", "1")]
+    [InlineData("tan(0)", "0")]
+    [InlineData("abs(10)", "10")]
+    [InlineData("abs(-10)", "10")]
+    [InlineData("floor(1.1)", "1")]
+    [InlineData("ceil(1.1)", "2")]
+    [InlineData("round(1.4)", "1")]
+    [InlineData("round(1.6)", "2")]
+    [InlineData("max(5, 10)", "10")]
+    [InlineData("min(5, 10)", "5")]
     public void MathOp_IsCorrect(string expr, string expected)
     {
         var source = $"print({expr});";
