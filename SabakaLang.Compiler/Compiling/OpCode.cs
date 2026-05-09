@@ -53,6 +53,12 @@ public enum OpCode
     Time, TimeMs,
     HttpGet, HttpPost, HttpPostJson,
     Ord, Chr,
+    
+    MathSin,
+    MathCos,
+    MathLog,
+    MathRand,
+    MathSqrt,
  
     CallExternal
 }
