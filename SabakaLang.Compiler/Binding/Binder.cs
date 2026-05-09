@@ -141,7 +141,7 @@ public sealed class Binder
         {
             BindExpr(v.Init);
             
-            if (v.Init is NullLit && !v.Type.IsNullable)
+            if (v is { Init: NullLit, Type.IsNullable: false })
                 AddWarning($"Variable '{v.Name}' has non-nullable type '{TypeRefToString(v.Type)}' but is assigned null.", v.Span.Start);
         }
 
