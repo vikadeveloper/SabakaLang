@@ -59,6 +59,14 @@ public enum OpCode
     MathLog,
     MathRand,
     MathSqrt,
+    MathAbs,
+    MathFloor,
+    MathCeil,
+    MathRound,
+    MathPow,
+    MathMax,
+    MathMin,
+    MathTan,
  
     CallExternal
 }

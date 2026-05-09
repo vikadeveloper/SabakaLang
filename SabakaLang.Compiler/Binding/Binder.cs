@@ -71,6 +71,14 @@ public sealed class Binder
         B("log",          "float",    "float value, float base");
         B("rand",         "int",      "int min, int max");
         B("sqrt",         "float",    "float value");
+        B("abs",          "float",    "float value");
+        B("floor",        "int",      "float value");
+        B("ceil",         "int",      "float value");
+        B("round",        "int",      "float value");
+        B("max",          "float",    "float a, float b");
+        B("min",          "float",    "float a, float b");
+        B("pow",          "float",    "float a, float b");
+        B("tan",          "float",    "float angle");
     }
 
     private void HoistTopLevel(IStmt stmt)
