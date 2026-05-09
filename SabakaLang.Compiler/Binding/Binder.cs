@@ -66,6 +66,11 @@ public sealed class Binder
         B("httpPostJson", "string",   "string url, string json");
         B("ord",          "int",      "string str");
         B("chr",          "string",   "int code");
+        B("sin",          "float",    "float angle");
+        B("cos",          "float",    "float angle");
+        B("log",          "float",    "float value, float base");
+        B("rand",         "int",      "int min, int max");
+        B("sqrt",         "float",    "float value");
     }
 
     private void HoistTopLevel(IStmt stmt)
