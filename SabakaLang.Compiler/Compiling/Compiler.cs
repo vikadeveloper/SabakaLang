@@ -881,6 +881,76 @@ public sealed class Compiler
                 Emit(OpCode.Input);
                 return true;
  
+            case "sin":
+                EmitExpr(c.Args[0]);
+                Emit(OpCode.MathSin);
+                return true;
+            
+            case "cos":
+                EmitExpr(c.Args[0]);
+                Emit(OpCode.MathCos);
+                return true;
+            
+            case "log":
+                EmitExpr(c.Args[0]);
+                EmitExpr(c.Args[1]);
+                Emit(OpCode.MathLog);
+                return true;
+            
+            case "rand":
+                EmitExpr(c.Args[0]);
+                EmitExpr(c.Args[1]);
+                Emit(OpCode.MathRand);
+                return true;
+            
+            case "sqrt":
+                EmitExpr(c.Args[0]);
+                Emit(OpCode.MathSqrt);
+                return true;
+            
+            case "abs":
+                EmitExpr(c.Args[0]);
+                Emit(OpCode.MathAbs);
+                return true;
+            
+            case "floor":
+                EmitExpr(c.Args[0]);
+                Emit(OpCode.MathFloor);
+                return true;
+            
+            case "ceil":
+                EmitExpr(c.Args[0]);
+                Emit(OpCode.MathCeil);
+                return true;
+            
+            case "round":
+                EmitExpr(c.Args[0]);
+                Emit(OpCode.MathRound);
+                return true;
+            
+            case "max":
+                EmitExpr(c.Args[0]);
+                EmitExpr(c.Args[1]);
+                Emit(OpCode.MathMax);
+                return true;
+            
+            case "min":
+                EmitExpr(c.Args[0]);
+                EmitExpr(c.Args[1]);
+                Emit(OpCode.MathMin);
+                return true;
+            
+            case "pow":
+                EmitExpr(c.Args[0]);
+                EmitExpr(c.Args[1]);
+                Emit(OpCode.MathPow);
+                return true;
+            
+            case "tan":
+                EmitExpr(c.Args[0]);
+                Emit(OpCode.MathTan);
+                return true;
+            
             case "sleep":
                 RequireArgCount(c, 1);
                 EmitExpr(c.Args[0]);
