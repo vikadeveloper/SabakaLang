@@ -34,7 +34,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SabakaLang.Compiler\SabakaLang.Compiler.csproj" />
+      <ProjectReference Include="..\..\src\SabakaLang.Compiler\SabakaLang.Compiler.csproj" />
     </ItemGroup>
 
 </Project>

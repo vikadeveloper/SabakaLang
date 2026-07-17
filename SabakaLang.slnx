@@ -1,12 +1,16 @@
 <Solution>
-  <Project Path="SabakaLang.Cli/SabakaLang.Cli.csproj" />
-  <Project Path="SabakaLang.Compiler.UnitTests/SabakaLang.Compiler.UnitTests.csproj" />
-  <Project Path="SabakaLang.Compiler/SabakaLang.Compiler.csproj" />
-  <Project Path="SabakaLang.Debugger/SabakaLang.Debugger.csproj" />
-  <Project Path="SabakaLang.LanguageServer.UnitTests/SabakaLang.LanguageServer.UnitTests.csproj" />
-  <Project Path="SabakaLang.LanguageServer/SabakaLang.LanguageServer.csproj" />
-  <Project Path="SabakaLang.Runner/SabakaLang.Runner.csproj" />
-  <Project Path="SabakaLang.Runtime.UnitTests/SabakaLang.Runtime.UnitTests.csproj" />
-  <Project Path="SabakaLang.Runtime/SabakaLang.Runtime.csproj" />
-  <Project Path="SabakaLang.Studio/SabakaLang.Studio.csproj" />
+  <Folder Name="/tests/">
+    <Project Path="tests/SabakaLang.Compiler.UnitTests/SabakaLang.Compiler.UnitTests.csproj" />
+    <Project Path="tests/SabakaLang.LanguageServer.UnitTests/SabakaLang.LanguageServer.UnitTests.csproj" />
+    <Project Path="tests/SabakaLang.Runtime.UnitTests/SabakaLang.Runtime.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/SabakaLang.Cli/SabakaLang.Cli.csproj" />
+    <Project Path="src/SabakaLang.Compiler/SabakaLang.Compiler.csproj" />
+    <Project Path="src/SabakaLang.Debugger/SabakaLang.Debugger.csproj" />
+    <Project Path="src/SabakaLang.LanguageServer/SabakaLang.LanguageServer.csproj" />
+    <Project Path="src/SabakaLang.Runner/SabakaLang.Runner.csproj" />
+    <Project Path="src/SabakaLang.Runtime/SabakaLang.Runtime.csproj" />
+    <Project Path="src/SabakaLang.Studio/SabakaLang.Studio.csproj" />
+  </Folder>
 </Solution>

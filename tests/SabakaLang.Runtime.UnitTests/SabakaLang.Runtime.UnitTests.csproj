@@ -2,12 +2,13 @@
 
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
+
     <PropertyGroup>
-        
         <TestingPlatform_EnableDotNetTestInfrastructure>true</TestingPlatform_EnableDotNetTestInfrastructure>
     </PropertyGroup>
 
@@ -15,6 +16,7 @@
         <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="1.5.3" />
         <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.14.2" />
     </ItemGroup>
+
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="10.0.0">
@@ -26,18 +28,16 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="FluentAssertions" Version="8.4.0" />
         <PackageReference Include="xunit.v3" Version="4.0.0-pre.128" />
     </ItemGroup>
 
     <ItemGroup>
         <Using Include="Xunit"/>
-        <Using Include="FluentAssertions" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SabakaLang.LanguageServer\SabakaLang.LanguageServer.csproj" />
-      <ProjectReference Include="..\SabakaLang.Compiler\SabakaLang.Compiler.csproj"/>
+      <ProjectReference Include="..\..\src\SabakaLang.Compiler\SabakaLang.Compiler.csproj" />
+      <ProjectReference Include="..\..\src\SabakaLang.Runtime\SabakaLang.Runtime.csproj" />
     </ItemGroup>
 
 </Project>
