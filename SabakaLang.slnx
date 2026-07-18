@@ -12,5 +12,6 @@
     <Project Path="src/SabakaLang.Runner/SabakaLang.Runner.csproj" />
     <Project Path="src/SabakaLang.Runtime/SabakaLang.Runtime.csproj" />
     <Project Path="src/SabakaLang.Studio/SabakaLang.Studio.csproj" />
+    <Project Path="src/SabakaLang.Transpiler/SabakaLang.Transpiler.csproj" />
   </Folder>
 </Solution>
