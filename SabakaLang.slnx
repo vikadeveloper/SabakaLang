@@ -3,6 +3,7 @@
     <Project Path="tests/SabakaLang.Compiler.UnitTests/SabakaLang.Compiler.UnitTests.csproj" />
     <Project Path="tests/SabakaLang.LanguageServer.UnitTests/SabakaLang.LanguageServer.UnitTests.csproj" />
     <Project Path="tests/SabakaLang.Runtime.UnitTests/SabakaLang.Runtime.UnitTests.csproj" />
+    <Project Path="tests/SabakaLang.Transpiler.UnitTests/SabakaLang.Transpiler.UnitTests.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/SabakaLang.Cli/SabakaLang.Cli.csproj" />
