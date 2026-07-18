@@ -64,12 +64,14 @@ public sealed class Binder
         B("httpGet",      "string",   "string url");
         B("httpPost",     "string",   "string url, string body");
         B("httpPostJson", "string",   "string url, string json");
+        B("exit",         "void",     "int code");
         B("ord",          "int",      "string str");
         B("chr",          "string",   "int code");
         B("sin",          "float",    "float angle");
         B("cos",          "float",    "float angle");
         B("log",          "float",    "float value, float base");
         B("rand",         "int",      "int min, int max");
+        B("random",       "float");
         B("sqrt",         "float",    "float value");
         B("abs",          "float",    "float value");
         B("floor",        "int",      "float value");

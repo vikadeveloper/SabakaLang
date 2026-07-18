@@ -1,4 +1,6 @@
-﻿using SabakaLang.Compiler;
+﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
+using SabakaLang.Compiler;
 using SabakaLang.Compiler.Binding;
 using SabakaLang.Compiler.Lexing;
 using SabakaLang.Compiler.Parsing;
@@ -21,6 +23,29 @@ public static class Program
 
             case "run":
                 var src = File.ReadAllText(args[1]);
+
+                if (args[2] == "--to-il")
+                {
+                    var transpiler = new Transpiler.Transpiler();
+                    
+                    var csharp = transpiler.Transpile(src);
+                    
+                    Console.WriteLine(csharp);
+                    
+                    var options = ScriptOptions.Default
+                        .AddReferences(
+                            typeof(Console).Assembly,
+                            typeof(System.Linq.Enumerable).Assembly,
+                            typeof(System.Collections.Generic.List<>).Assembly,
+                            typeof(System.IO.File).Assembly,
+                            typeof(System.Threading.Thread).Assembly
+                        )
+                        .AddImports("System", "System.IO", "System.Linq", "System.Collections.Generic", "System.Threading");
+                    
+                    CSharpScript.RunAsync(csharp, options).Wait();
+                    
+                    break;
+                }
 
                 var lexer = new Lexer(src);
                 var parser = new Parser(lexer.Tokenize());

@@ -15,12 +15,25 @@ public class Transpiler
     public string Transpile(string src)
     {
         var tokens = new Lexer(src).Tokenize();
-        if (tokens.HasErrors) return "";
+        if (tokens.HasErrors)
+        {
+            foreach (var err in tokens.Errors) Console.Error.WriteLine($"Lexer Error: {err.Message} at {err.Position}");
+            return "";
+        }
 
         var ast = new Parser(tokens).Parse();
-        if (ast.HasErrors) return "";
+        if (ast.HasErrors)
+        {
+            foreach (var err in ast.Errors) Console.Error.WriteLine($"Parser Error: {err.Message} at {err.Position}");
+            return "";
+        }
 
         var bindResult = new Binder().Bind(ast.Statements);
+        if (bindResult.Errors.Any())
+        {
+             foreach (var err in bindResult.Errors) Console.Error.WriteLine($"Binder Error: {err.Message} at {err.Position}");
+             return "";
+        }
         _symbols = bindResult.Symbols;
 
         _sb.Clear();
@@ -352,6 +365,126 @@ public class Transpiler
         _sb.AppendLine("}");
     }
 
+    private void TranspileCall(CallExpr c)
+    {
+        if (c.Callee is NameExpr ne && _symbols != null)
+        {
+            var sym = _symbols.All.FirstOrDefault(s => s.Name == ne.Name && s.Kind == SymbolKind.BuiltIn);
+            if (sym != null)
+            {
+                switch (ne.Name)
+                {
+                    case "print":
+                        _sb.Append("Console.WriteLine");
+                        break;
+                    case "input":
+                        _sb.Append("Console.ReadLine()");
+                        return;
+                    case "sleep":
+                        _sb.Append("Thread.Sleep");
+                        break;
+                    case "readFile":
+                        _sb.Append("File.ReadAllText");
+                        break;
+                    case "writeFile":
+                        _sb.Append("File.WriteAllText");
+                        break;
+                    case "appendFile":
+                        _sb.Append("File.AppendAllText");
+                        break;
+                    case "fileExists":
+                        _sb.Append("File.Exists");
+                        break;
+                    case "deleteFile":
+                        _sb.Append("File.Delete");
+                        break;
+                    case "readLines":
+                        _sb.Append("File.ReadAllLines");
+                        break;
+                    case "time":
+                        _sb.Append("DateTime.Now.ToString(\"HH:mm:ss\")");
+                        return;
+                    case "timeMs":
+                        _sb.Append("Environment.TickCount");
+                        return;
+                    case "sin":
+                        _sb.Append("Math.Sin");
+                        break;
+                    case "cos":
+                        _sb.Append("Math.Cos");
+                        break;
+                    case "tan":
+                        _sb.Append("Math.Tan");
+                        break;
+                    case "sqrt":
+                        _sb.Append("Math.Sqrt");
+                        break;
+                    case "abs":
+                        _sb.Append("Math.Abs");
+                        break;
+                    case "floor":
+                        _sb.Append("(int)Math.Floor");
+                        break;
+                    case "ceil":
+                        _sb.Append("(int)Math.Ceiling");
+                        break;
+                    case "round":
+                        _sb.Append("(int)Math.Round");
+                        break;
+                    case "max":
+                        _sb.Append("Math.Max");
+                        break;
+                    case "min":
+                        _sb.Append("Math.Min");
+                        break;
+                    case "pow":
+                        _sb.Append("Math.Pow");
+                        break;
+                    case "log":
+                        _sb.Append("Math.Log");
+                        break;
+                    case "rand":
+                        _sb.Append("new Random().Next");
+                        break;
+                    case "random":
+                        _sb.Append("new Random().NextDouble()");
+                        return;
+                    case "exit":
+                        _sb.Append("Environment.Exit");
+                        break;
+                    case "ord":
+                        _sb.Append("(int)");
+                        TranspileExpression(c.Args[0]);
+                        _sb.Append("[0]");
+                        return;
+                    case "chr":
+                        _sb.Append("((char)");
+                        TranspileExpression(c.Args[0]);
+                        _sb.Append(").ToString()");
+                        return;
+                }
+
+                _sb.Append("(");
+                for (int i = 0; i < c.Args.Count; i++)
+                {
+                    TranspileExpression(c.Args[i]);
+                    if (i < c.Args.Count - 1) _sb.Append(", ");
+                }
+                _sb.Append(")");
+                return;
+            }
+        }
+
+        TranspileExpression(c.Callee);
+        _sb.Append("(");
+        for (int i = 0; i < c.Args.Count; i++)
+        {
+            TranspileExpression(c.Args[i]);
+            if (i < c.Args.Count - 1) _sb.Append(", ");
+        }
+        _sb.Append(")");
+    }
+
     private void TranspileExpression(IExpr expr)
     {
         switch (expr)
@@ -375,14 +508,7 @@ public class Transpiler
                 TranspileExpression(u.Operand);
                 break;
             case CallExpr c:
-                TranspileExpression(c.Callee);
-                _sb.Append("(");
-                for (int i = 0; i < c.Args.Count; i++)
-                {
-                    TranspileExpression(c.Args[i]);
-                    if (i < c.Args.Count - 1) _sb.Append(", ");
-                }
-                _sb.Append(")");
+                TranspileCall(c);
                 break;
             case MemberExpr m:
                 TranspileExpression(m.Object);

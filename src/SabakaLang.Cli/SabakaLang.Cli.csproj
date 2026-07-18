@@ -13,9 +13,11 @@
     <ItemGroup>
       <ProjectReference Include="..\SabakaLang.Compiler\SabakaLang.Compiler.csproj" />
       <ProjectReference Include="..\SabakaLang.Runtime\SabakaLang.Runtime.csproj" />
+      <ProjectReference Include="..\SabakaLang.Transpiler\SabakaLang.Transpiler.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="5.6.0" />
       <PackageReference Include="Spectre.Console" Version="0.57.2" />
     </ItemGroup>
 

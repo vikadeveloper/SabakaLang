@@ -1,0 +1,4 @@
+print("testing built-ins");
+int x = floor(5.5);
+print("floor(5.5) = " + x);
+print("random: " + random());

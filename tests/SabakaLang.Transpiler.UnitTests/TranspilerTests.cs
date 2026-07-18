@@ -70,4 +70,18 @@ public class TranspilerTests
         var result = transpiler.Transpile(code);
         Assert.Contains("$\"hello {name}!\"", result);
     }
+    [Fact]
+    public void Transpile_BuiltIns()
+    {
+        var transpiler = new Transpiler();
+        var src = @"
+print(""hello"");
+int x = floor(3.14);
+float s = sin(1.0);
+";
+        var result = transpiler.Transpile(src);
+        Assert.Contains("Console.WriteLine(\"hello\");", result);
+        Assert.Contains("int x = (int)Math.Floor(3.14);", result);
+        Assert.Contains("Math.Sin(1)", result);
+    }
 }
