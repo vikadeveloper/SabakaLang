@@ -80,11 +80,18 @@ public class Packer
 
                     var allDecls = new StringBuilder();
                     var mainStmts = new StringBuilder();
+                    var allImports = new StringBuilder();
 
                     // Transpile each file using the collected ASTs
                     foreach (var entry in fileAsts)
                     {
                         var parts = transpiler.TranspileAst(entry.Value, binderForIl);
+                        var sb = new StringBuilder();
+                        foreach (var importStmt in parts.importStmts)
+                        {
+                            sb.AppendLine($"using {importStmt.Path};");
+                        }
+                        allImports.AppendLine(sb.ToString());
                         allDecls.AppendLine(parts.Decls);
                         if (string.Equals(Path.GetFullPath(entry.Key), Path.GetFullPath(mainFile), StringComparison.OrdinalIgnoreCase))
                         {
@@ -98,6 +105,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
+{allImports}
 
 public static class Program 
 {{

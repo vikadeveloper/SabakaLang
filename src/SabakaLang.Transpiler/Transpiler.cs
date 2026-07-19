@@ -12,7 +12,7 @@ public class Transpiler
     private int _indent;
     private SymbolTable? _symbols;
 
-    public (string Decls, string Stmts) TranspileAst(ParseResult ast, Binder binder)
+    public (string Decls, string Stmts, List<ImportStmt> importStmts) TranspileAst(ParseResult ast, Binder binder)
     {
         var bindResult = binder.Bind(ast.Statements);
         _symbols = bindResult.Symbols;
@@ -21,7 +21,13 @@ public class Transpiler
         var stmtsSb = new StringBuilder();
         
         var decls = ast.Statements.Where(IsDeclaration).ToList();
-        var stmts = ast.Statements.Where(s => !IsDeclaration(s) && s is not ImportStmt).ToList();
+        var stmts = ast.Statements.Where(s => !IsDeclaration(s)).ToList();
+        
+        var imports = ast.Statements.OfType<ImportStmt>().ToList();
+        
+        imports.RemoveAll(s => s.Path.EndsWith(".sabaka"));
+        
+        stmts.RemoveAll(s => s is ImportStmt);
 
         var oldSb = _sb;
 
@@ -34,26 +40,7 @@ public class Transpiler
         foreach (var stmt in stmts) TranspileStatement(stmt);
         
         _sb = oldSb;
-        return (declsSb.ToString(), stmtsSb.ToString());
-    }
-
-    public (string Decls, string Stmts) TranspileParts(string src, Binder binder)
-    {
-        var tokens = new Lexer(src).Tokenize();
-        if (tokens.HasErrors)
-        {
-            foreach (var err in tokens.Errors) Console.Error.WriteLine($"Lexer Error: {err.Message} at {err.Position}");
-            return ("", "");
-        }
-
-        var ast = new Parser(tokens).Parse();
-        if (ast.HasErrors)
-        {
-            foreach (var err in ast.Errors) Console.Error.WriteLine($"Parser Error: {err.Message} at {err.Position}");
-            return ("", "");
-        }
-
-        return TranspileAst(ast, binder);
+        return (declsSb.ToString(), stmtsSb.ToString(), imports);
     }
 
     public bool IsDeclaration(IStmt stmt)
