@@ -1,5 +1,10 @@
 import "other.sabaka";
+import "System.Text";
 
-print("Main file starting...");
 Hello();
-print("Main file ending.");
+
+StringBuilder sb = new StringBuilder();
+
+sb.Append("debug");
+
+print(sb.ToString());
