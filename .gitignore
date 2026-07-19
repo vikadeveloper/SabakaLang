@@ -1,6 +1,8 @@
 .idea
 .git
 
+output
+
 obj
 bin
 

@@ -8,36 +8,95 @@ namespace SabakaLang.Transpiler;
 
 public class Transpiler
 {
-    private readonly StringBuilder _sb = new();
+    private StringBuilder _sb = new();
     private int _indent;
     private SymbolTable? _symbols;
 
-    public string Transpile(string src)
+    public (string Decls, string Stmts) TranspileAst(ParseResult ast, Binder binder)
+    {
+        var bindResult = binder.Bind(ast.Statements);
+        _symbols = bindResult.Symbols;
+
+        var declsSb = new StringBuilder();
+        var stmtsSb = new StringBuilder();
+        
+        var decls = ast.Statements.Where(IsDeclaration).ToList();
+        var stmts = ast.Statements.Where(s => !IsDeclaration(s) && s is not ImportStmt).ToList();
+
+        var oldSb = _sb;
+
+        _indent = 1;
+        _sb = declsSb;
+        foreach (var stmt in decls) TranspileStatement(stmt);
+
+        _indent = 2;
+        _sb = stmtsSb;
+        foreach (var stmt in stmts) TranspileStatement(stmt);
+        
+        _sb = oldSb;
+        return (declsSb.ToString(), stmtsSb.ToString());
+    }
+
+    public (string Decls, string Stmts) TranspileParts(string src, Binder binder)
     {
         var tokens = new Lexer(src).Tokenize();
         if (tokens.HasErrors)
         {
             foreach (var err in tokens.Errors) Console.Error.WriteLine($"Lexer Error: {err.Message} at {err.Position}");
-            return "";
+            return ("", "");
         }
 
         var ast = new Parser(tokens).Parse();
         if (ast.HasErrors)
         {
             foreach (var err in ast.Errors) Console.Error.WriteLine($"Parser Error: {err.Message} at {err.Position}");
+            return ("", "");
+        }
+
+        return TranspileAst(ast, binder);
+    }
+
+    public bool IsDeclaration(IStmt stmt)
+    {
+        return stmt is ClassDecl || stmt is FuncDecl || stmt is InterfaceDecl || stmt is StructDecl || stmt is EnumDecl;
+    }
+
+    public string Transpile(string src)
+    {
+        return Transpile(src, new Binder());
+    }
+
+    public string Transpile(string src, Binder binder, bool includeUsings = true)
+    {
+        var tokens = new Lexer(src).Tokenize();
+        if (tokens.HasErrors)
+        {
+            // foreach (var err in tokens.Errors) Console.Error.WriteLine($"Lexer Error: {err.Message} at {err.Position}");
             return "";
         }
 
-        var bindResult = new Binder().Bind(ast.Statements);
-        if (bindResult.Errors.Any())
+        var ast = new Parser(tokens).Parse();
+        if (ast.HasErrors)
         {
-             foreach (var err in bindResult.Errors) Console.Error.WriteLine($"Binder Error: {err.Message} at {err.Position}");
-             return "";
+            // foreach (var err in ast.Errors) Console.Error.WriteLine($"Parser Error: {err.Message} at {err.Position}");
+            return "";
         }
+
+        var bindResult = binder.Bind(ast.Statements);
         _symbols = bindResult.Symbols;
 
         _sb.Clear();
         _indent = 0;
+
+        if (includeUsings)
+        {
+            _sb.AppendLine("using System;");
+            _sb.AppendLine("using System.IO;");
+            _sb.AppendLine("using System.Linq;");
+            _sb.AppendLine("using System.Collections.Generic;");
+            _sb.AppendLine("using System.Threading;");
+            _sb.AppendLine();
+        }
 
         foreach (var stmt in ast.Statements)
         {
@@ -109,20 +168,23 @@ public class Transpiler
 
     private void TranspileImport(ImportStmt import)
     {
+        var path = import.Path.Trim('\"');
+        if (path.EndsWith(".sabaka")) return;
+
         if (import.Names.Count > 0)
         {
             foreach (var name in import.Names)
             {
                 _sb.Append("using ");
                 if (import.Alias != null) _sb.Append($"{import.Alias} = ");
-                _sb.AppendLine($"{import.Path.Trim('\"')}.{name};");
+                _sb.AppendLine($"{path}.{name};");
             }
         }
         else
         {
             _sb.Append("using ");
             if (import.Alias != null) _sb.Append($"{import.Alias} = ");
-            _sb.AppendLine($"{import.Path.Trim('\"')};");
+            _sb.AppendLine($"{path};");
         }
     }
 
@@ -143,8 +205,11 @@ public class Transpiler
 
     private void TranspileFuncDecl(FuncDecl funcDecl)
     {
+        var isTopLevel = _symbols?.All.FirstOrDefault(s => s.Name == funcDecl.Name && s.Span == funcDecl.Span)?.Kind == SymbolKind.Function;
+        
         WriteIndent();
         _sb.Append($"{GetAccessMod(funcDecl.Access)} ");
+        if (isTopLevel) _sb.Append("static ");
         if (funcDecl.IsOverride) _sb.Append("override ");
         _sb.Append($"{TranspileType(funcDecl.ReturnType)} {funcDecl.Name}");
         if (funcDecl.TypeParams.Count > 0)
@@ -369,8 +434,16 @@ public class Transpiler
     {
         if (c.Callee is NameExpr ne && _symbols != null)
         {
-            var sym = _symbols.All.FirstOrDefault(s => s.Name == ne.Name && s.Kind == SymbolKind.BuiltIn);
-            if (sym != null)
+            var sym = _symbols.All.FirstOrDefault(s => s.Name == ne.Name);
+            if (sym != null && sym.Kind == SymbolKind.Function)
+            {
+                // If it's a function from another file, it might be in a different class.
+                // But for now we just try to call it.
+                // If we wrapped it in a class, we'd need to know which class.
+                // Let's see if we can find the file it came from.
+            }
+
+            if (sym != null && sym.Kind == SymbolKind.BuiltIn)
             {
                 switch (ne.Name)
                 {

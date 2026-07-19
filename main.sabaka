@@ -1,0 +1,5 @@
+import "other.sabaka";
+
+print("Main file starting...");
+Hello();
+print("Main file ending.");

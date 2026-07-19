@@ -18,7 +18,7 @@ public class TranspilerTests
         var transpiler = new Transpiler();
         var code = "void foo(int a) { return a + 1; }";
         var result = transpiler.Transpile(code);
-        Assert.Contains("public void foo(int a)", result);
+        Assert.Contains("public static void foo(int a)", result);
         Assert.Contains("return (a + 1);", result);
     }
 

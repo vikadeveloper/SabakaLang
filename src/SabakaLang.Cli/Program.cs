@@ -67,7 +67,7 @@ public static class Program
                 break;
             
             case "pack":
-                new Packer().Pack(args[1].Trim(), args[2].Trim());
+                new Packer().Pack(args[1].Trim(), args[2].Trim(), args.Any(x => x == "--to-il"));
                 break;
         }
     }

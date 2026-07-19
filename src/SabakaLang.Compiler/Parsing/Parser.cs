@@ -237,7 +237,18 @@ public sealed class Parser
         var start = Current.Start;
         var access = TryConsumeAccessMod(defaultAccess);
         var isOverride = Match(TokenType.Override);
-        var returnType = ParseTypeRef();
+        
+        TypeRef returnType;
+        if (Check(TokenType.Identifier) && Current.Value == "func")
+        {
+            Advance();
+            returnType = new TypeRef("void", [], false, false);
+        }
+        else
+        {
+            returnType = ParseTypeRef();
+        }
+
         var name = Expect(TokenType.Identifier).Value;
         var typeParams = TryParseTypeParams();
         Expect(TokenType.LParen);
@@ -941,6 +952,10 @@ public sealed class Parser
         int o = 0;
         if (IsAccessMod(Peek(o).Type)) o++;
         if (Peek(o).Type == TokenType.Override) o++;
+
+        if (Peek(o).Type == TokenType.Identifier && Peek(o).Value == "func")
+            return true;
+
         if (!IsTypeStart(Peek(o).Type)) return false;
         o++;
         if (Peek(o).Type == TokenType.Less) o = SkipAngles(o);
